@@ -1,0 +1,23 @@
+.tabs {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 15px;
+
+  & > * {
+    margin-right: 15px;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  .tab {
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  .active {
+    color: blue;
+    text-decoration: underline;
+  }
+}

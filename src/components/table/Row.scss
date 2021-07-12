@@ -1,0 +1,29 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  border-bottom: 1px solid white;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: 0px;
+  }
+}
+
+.error {
+  background-color: #ff210d;
+  box-shadow: 0px 0px 0px 0px rgba(199, 242, 242, 0.27);
+}
+
+.info {
+  background-color: #2427ff;
+  box-shadow: 0px 0px 0px 0px rgba(199, 242, 242, 0.27);
+}
+
+.error-selected {
+  box-shadow: 0px 0px 0px 3px rgba(146, 137, 137, 0.27);
+}
+
+.info-selected {
+  box-shadow: 0px 0px 0px 3px rgba(199, 242, 242, 0.27);
+}
