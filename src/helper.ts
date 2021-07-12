@@ -34,7 +34,6 @@ export const calculateDomainArray = (
   }
   if (min !== max) {
     if (min < 0 && max < 0) {
-      console.log(`min=${min} - max=${max}`);
       return [min, -min];
     } else if (min > 0 && max > 0) {
       return [0, max];

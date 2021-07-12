@@ -4,6 +4,7 @@ import Dashboard from './components/dashboard/Dashboard';
 
 import data from './data.json';
 import './App.scss';
+import Chart from './components/charts/Chart';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <h2>Metrics</h2>
       </header>
       <Dashboard />
+      <Chart />
     </div>
   );
 };

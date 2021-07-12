@@ -41,10 +41,10 @@ const BarChart: React.FC<Props> = ({ data }) => {
 
     // x axis scale
     const xScale = scaleBand()
-      .domain(data.map((val) => `${val.category} - ${val.description}`))
-      .range([0, DIMENSIONS.width - 120]);
+      .domain(data.map((val) => val.label))
+      .range([0, DIMENSIONS.width]);
     const xAxis = axisBottom(xScale);
-
+    data.map((val) => console.log(xScale(val.label)));
     // y axis scale
     const minDomain: number =
       min(data, (obj) => Number(obj.value.toString())) ?? 0;
@@ -104,12 +104,9 @@ const BarChart: React.FC<Props> = ({ data }) => {
       .data(data)
       .join('rect')
       .attr('fill', (d) => (d.value < 0 ? 'red' : 'blue'))
-      .attr('x', (d) => {
-        const val = `${d.category} - ${d.description}`;
-        return (xScale(val) ?? 0) + margin.left;
-      })
+      .attr('x', (d): number => Number(xScale(d.label)) + margin.left + 15)
       .attr('y', (d) => yScale(Math.max(0, Number(d.value.toString()))))
-      .attr('width', 30)
+      .attr('width', 20)
       .attr('height', (d) =>
         Math.abs(yScale(Number(d.value.toString())) - yScale(0)),
       );
