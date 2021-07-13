@@ -2,30 +2,32 @@ import React from 'react';
 import classnames from 'classnames';
 
 import './Col.scss';
+import { typifyVal, UNITS } from '../../helper';
 
 interface Props {
   value: string | number;
   numCols: number;
-  isPercentage: boolean;
+  type: string;
   center: boolean;
   head?: boolean;
 }
 
 // Gives meaningful value. we can use switch in case of we have many types of representing data
 // in this case i have only consdiered percentage, hence no switch statement.
-const getProperValue = (
+export const getProperValue = (
   value: string | number,
-  isPercentage: boolean,
-): string | number =>
-  isPercentage ? `${parseFloat(value.toString()) * 100}%` : value;
+  type: string,
+): string | number => {
+  if (type === UNITS.percentage) {
+    return `${typifyVal(type, Number(value))}%`;
+  } else if ([UNITS.hours, UNITS.secs].includes(type)) {
+    return `${typifyVal(type, Number(value))} secs`;
+  }
 
-const Col: React.FC<Props> = ({
-  value,
-  numCols,
-  isPercentage,
-  center,
-  head,
-}) => {
+  return value;
+};
+
+const Col: React.FC<Props> = ({ value, numCols, type, center, head }) => {
   return (
     <div
       className={classnames('col', `col-${numCols}`, {
@@ -33,7 +35,7 @@ const Col: React.FC<Props> = ({
         head,
       })}
     >
-      {getProperValue(value, isPercentage)}
+      {getProperValue(value, type)}
     </div>
   );
 };

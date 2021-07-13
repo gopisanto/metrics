@@ -53,7 +53,7 @@ const Individual: React.FC<Props> = ({ data, groupMode }) => {
           hide: screenSize === 's' && selectedTab !== 'chart',
         })}
       >
-        <BarChart data={data} />
+        <BarChart data={data} splitMode={groupMode} />
       </div>
       <div
         className={classnames('tableContainer', {
@@ -69,7 +69,7 @@ const Individual: React.FC<Props> = ({ data, groupMode }) => {
                 value={key}
                 numCols={rowHeadLabels[key]}
                 center
-                isPercentage={false}
+                type={''}
               />
             ))}
           </Row>
@@ -86,9 +86,7 @@ const Individual: React.FC<Props> = ({ data, groupMode }) => {
                   {key !== 'type' && (
                     <Col
                       value={datum[key as keyof DataProps]}
-                      isPercentage={
-                        key === 'value' && datum.type === 'percentage'
-                      }
+                      type={key === 'value' ? datum.type : ''}
                       numCols={key === 'description' ? 3 : 1}
                       center={key === 'value'}
                     />
