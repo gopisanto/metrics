@@ -3,28 +3,59 @@ import * as d3 from 'd3';
 import { DataProps } from '../dashboard/Dashboard';
 import data from '../../data.json';
 import { calculateDomainArray } from '../../helper';
+import { callbackify } from 'util';
+
+import './Chart.scss';
 
 const Chart: React.FC = () => {
   const chartRef = useRef(null);
   const width = 500;
   const height = 500;
-  const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+  const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+  const chartWidth = width - margin.left - margin.right;
+  const chartHeight = height - margin.top - margin.bottom;
 
   useLayoutEffect(() => {
     const svg = d3
       .select(chartRef.current)
-      .append('svg')
-      .attr('width', width - margin.left - margin.right)
-      .attr('height', height - margin.top - margin.bottom)
-      .attr('viewBox', `0 0 ${height} ${width}`);
-    const x = d3
+      .attr('width', width)
+      .attr('height', height);
+
+    // x scale
+    const xScale = d3
+      .scaleBand()
+      .domain(data.data.map((val) => val.label))
+      .range([margin.left, width - margin.right]);
+
+    //x-axis
+    const xAxis = d3.axisBottom(xScale).tickSize(0);
+
+    // y scale
+    const minDomain: number =
+      d3.min(data.data, (obj) => Number(obj.value.toString())) ?? 0;
+    const maxDomain: number =
+      d3.max(data.data, (obj) => Number(obj.value.toString())) ?? 0;
+    const extents = d3.extent(data.data.map((datum) => datum.value).concat(0));
+    const minExtent = extents[0] || minDomain;
+    const maxExtent = extents[1] || maxDomain;
+    const yScale = d3
+      .scaleLinear()
+      .domain([minExtent, maxExtent])
+      .range([height - margin.bottom, margin.top]);
+
+    //y-axis
+    const yAxis = d3
+      .axisLeft(yScale)
+      .tickSize(0)
+      .ticks(data.data.length + 1);
+
+    /*const x = d3
       .scaleBand()
       .domain(data.data.map((val) => val.label))
       .range([margin.left, width - margin.right])
-      .padding(0.1);
-    const xAxis = d3.axisBottom(x).tickFormat((val) => val);
+      .padding(0.1);*/
 
-    const minDomain: number =
+    /*const minDomain: number =
       d3.min(data.data, (obj) => Number(obj.value.toString())) ?? 0;
     const maxDomain: number =
       d3.max(data.data, (obj) => Number(obj.value.toString())) ?? 0;
@@ -32,46 +63,101 @@ const Chart: React.FC = () => {
       minDomain,
       maxDomain,
       data.data.length,
-    );
+    );*/
 
-    const yScale = d3.scaleLinear().domain([0, maxDomain]).range([0, height]);
+    /*const yScale = d3.scaleLinear().domain([0, maxDomain]).range([0, height]);
 
+    const extents = d3.extent(data.data.map((datum) => datum.value));
+    const minExtent = extents[0] || minDomain;
+    const maxExtent = extents[1] || maxDomain;
     const y = d3
       .scaleLinear()
-      .domain(domainArray)
-      .range([height - margin.bottom, margin.top]);
+      .domain([minExtent, maxExtent])
+      .range([height - margin.bottom, margin.top]);*/
 
-    svg
+    //base axis
+    const baseAxis = d3.axisBottom(xScale).tickSize(0);
+
+    //define chart
+    const chart = svg
       .append('g')
-      .attr('transform', `translate(0, ${y(0)})`)
-      .call(xAxis)
-      .selectAll('text')
-      .data(data.data)
-      .text((d) => d.label)
-      .style('text-anchor', (d) => (d.value < 0 ? 'end' : 'start'))
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+    const bars = chart.selectAll('g').data(data.data).join('g');
+
+    //append bars
+    bars
+      .append('rect')
+      .attr('x', (d) => Number(xScale(d.label)))
+      .attr('y', (d) => yScale(Math.max(0, d.value)))
+      .attr('width', 30)
+      .attr('height', (d) => Math.abs(yScale(d.value) - yScale(0)));
+
+    //append text to bars
+    bars
+      .append('text')
+      .attr('x', (d) => Number(xScale(d.label)))
+      .attr('y', (d) => Math.abs(yScale(d.value) - yScale(0)) + 10)
+      .text((d) => d.value)
+      .style('text-anchor', 'start')
       .attr('dx', '.5em')
       .attr('dy', '-.5em')
       .attr('transform', 'rotate(-90)')
       .style('font-size', '1.2em');
 
-    const yAxis = d3.axisLeft(y);
+    // add base axis
+    chart
+      .append('g')
+      .attr('class', 'baseline')
+      .attr('transform', `translate(0, ${height})`)
+      .call(baseAxis);
+
+    // add x-axis
+    chart
+      .append('g')
+      .attr('class', 'axis x')
+      .attr('transform', `translate(0, ${yScale(0)})`)
+      .call(xAxis);
+
+    // add y-axis
+    chart
+      .append('g')
+      .attr('class', 'axis y')
+      .attr('transform', `translate(${margin.left}, 0)`)
+      .call(yAxis);
+
+    /*svg
+      .append('g')
+      .attr('transform', `translate(${margin.left}, ${yScale(0)})`)
+      .call(xAxis)
+      .selectAll('text')
+      .data(data.data)
+      .text((d) => d.label)
+      .style('text-anchor', (d) => (d.value < 0 ? 'end' : 'start'))
+      .attr('x', (d) => Number(x(d.label)) + x.bandwidth() / 2)
+      .attr('y', (d) => y(Math.max(0, d.value)))
+      .attr('transform', 'rotate(-90)')
+      .style('font-size', '1.2em');
 
     svg
       .append('g')
-      .attr('transform', `translate(${margin.left}, 0)`)
-      .call(yAxis)
-      .attr('font-size', '1em');
+      .attr('transform', `translate(0, ${yScale(minExtent)})`)
+      .call(baseAxis);
+
+    svg.append('g').call(yAxis).attr('font-size', '1em');
     console.log(`yscale = ${y(2280)}`);
     svg
       .append('g')
       .attr('fill', 'royalblue')
-      .selectAll('react')
+      .selectAll('rect')
       .data(data.data)
       .join('rect')
       .attr('x', (d) => Number(x(d.label)))
-      .attr('y', (d) => y(d.value))
+      .attr('y', (d) => y(Math.max(0, d.value)))
       .attr('width', x.bandwidth())
-      .attr('height', (d) => y(0) - y(d.value));
+      .attr('height', (d) => Math.abs(y(d.value) - y(0)));
 
     /*svg
       .append('g')
@@ -85,7 +171,7 @@ const Chart: React.FC = () => {
       .attr('height', (d) => y(0) - y(d.value));*/
   });
 
-  return <div ref={chartRef} style={{ height, width }}></div>;
+  return <svg ref={chartRef} />;
 };
 
 export default Chart;

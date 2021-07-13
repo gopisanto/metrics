@@ -42,8 +42,8 @@ const BarChart: React.FC<Props> = ({ data }) => {
     // x axis scale
     const xScale = scaleBand()
       .domain(data.map((val) => val.label))
-      .range([0, DIMENSIONS.width]);
-    const xAxis = axisBottom(xScale);
+      .range([margin.left, DIMENSIONS.width - margin.right]);
+    const xAxis = axisBottom(xScale).tickSize(0).ticks(0).tickValues([]);
     data.map((val) => console.log(xScale(val.label)));
     // y axis scale
     const minDomain: number =
@@ -53,10 +53,8 @@ const BarChart: React.FC<Props> = ({ data }) => {
     const domainArray = calculateDomainArray(minDomain, maxDomain, data.length);
     const yScale = scaleLinear()
       .domain(domainArray)
-      .range([DIMENSIONS.height - 100, 0]);
-    const yAxis = axisLeft(yScale);
-
-    yAxis.ticks(data.length < 2 ? 3 : data.length);
+      .range([DIMENSIONS.height - margin.bottom, margin.top]);
+    const yAxis = axisLeft(yScale).ticks(data.length < 2 ? 3 : data.length);
 
     // TODO: instead of removing and appending new, can select existing if any and apply Axis
     svg.selectAll('g').remove();
@@ -64,22 +62,14 @@ const BarChart: React.FC<Props> = ({ data }) => {
     svg
       .append('g')
       .classed('x-axis', true)
-      .attr('transform', `translate(${margin.left},${yScale(0)})`)
-      .call(xAxis)
-      .selectAll('text')
-      .data(data)
-      .text((d) => d.label)
-      .style('text-anchor', 'start')
-      .attr('dx', '.5em')
-      .attr('dy', '-.5em')
-      .attr('transform', 'rotate(-90)')
-      .style('font-size', '1.2em');
+      .attr('transform', `translate(0,${yScale(0)})`)
+      .call(xAxis);
 
     svg
-      .select('.x-axis')
+      .selectAll('.x-axis')
       .append('text')
       .attr('x', () => DIMENSIONS.width / 2)
-      .attr('y', 40)
+      .attr('y', yScale(0))
       .attr('fill', '#000')
       .style('font-size', '20px')
       .style('text-anchor', 'middle')
@@ -99,13 +89,15 @@ const BarChart: React.FC<Props> = ({ data }) => {
       .style('text-anchor', 'middle')
       .text('values');
 
+    const bars = svg.selectAll('rect');
+
     svg
       .selectAll('rect')
       .data(data)
       .join('rect')
       .attr('fill', (d) => (d.value < 0 ? 'red' : 'blue'))
-      .attr('x', (d): number => Number(xScale(d.label)) + margin.left + 15)
-      .attr('y', (d) => yScale(Math.max(0, Number(d.value.toString()))))
+      .attr('x', (d): number => Number(xScale(d.label)) + 15)
+      .attr('y', (d) => yScale(Math.max(0, d.value)))
       .attr('width', 20)
       .attr('height', (d) =>
         Math.abs(yScale(Number(d.value.toString())) - yScale(0)),
