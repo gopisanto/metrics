@@ -3,18 +3,18 @@ import React from 'react';
 import './Row.scss';
 
 interface Props {
-  level: string;
-  selected: boolean;
-  id: string;
-  onClickHandler: (id: string) => void;
+  level?: string;
+  selected?: boolean;
+  id?: string;
+  onClickHandler?: (id: string) => void;
 }
 
 const Row: React.FC<Props> = ({
   children,
   level,
   selected,
-  id,
-  onClickHandler,
+  id = '',
+  onClickHandler = (f) => f,
 }) => {
   return (
     <div

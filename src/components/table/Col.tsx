@@ -1,4 +1,5 @@
-import React, { useDebugValue } from 'react';
+import React from 'react';
+import classnames from 'classnames';
 
 import './Col.scss';
 
@@ -7,6 +8,7 @@ interface Props {
   numCols: number;
   isPercentage: boolean;
   center: boolean;
+  head?: boolean;
 }
 
 // Gives meaningful value. we can use switch in case of we have many types of representing data
@@ -17,9 +19,20 @@ const getProperValue = (
 ): string | number =>
   isPercentage ? `${parseFloat(value.toString()) * 100}%` : value;
 
-const Col: React.FC<Props> = ({ value, numCols, isPercentage, center }) => {
+const Col: React.FC<Props> = ({
+  value,
+  numCols,
+  isPercentage,
+  center,
+  head,
+}) => {
   return (
-    <div className={`col col-${numCols} ${center && 'alignCenter'}`}>
+    <div
+      className={classnames('col', `col-${numCols}`, {
+        alignCenter: center,
+        head,
+      })}
+    >
       {getProperValue(value, isPercentage)}
     </div>
   );

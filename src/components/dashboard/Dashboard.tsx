@@ -1,5 +1,4 @@
-import React, { useState, useCallback } from 'react';
-import classnames from 'classnames';
+import React, { useState } from 'react';
 import { AiOutlineGroup } from 'react-icons/ai';
 
 import Individual from './Individual';
@@ -33,12 +32,12 @@ const Dashboard: React.FC = () => {
         <div>
           {groupBy(data.data, ['category', 'type']).map(
             (item: DataProps[], index) => (
-              <Individual key={`${item[0].id}${index}`} data={item} />
+              <Individual groupMode key={`${item[0].id}${index}`} data={item} />
             ),
           )}
         </div>
       )}
-      {!groupMode && <Individual data={data.data} />}
+      {!groupMode && <Individual groupMode={false} data={data.data} />}
     </div>
   );
 };

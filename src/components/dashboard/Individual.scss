@@ -1,16 +1,14 @@
 .individual {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 500px;
+  flex-direction: column;
+  margin-bottom: 30px;
 }
 
 .chart {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 30px;
 }
 
 .tableContainer {
@@ -24,4 +22,11 @@
 }
 
 @media (min-width: 768px) {
+  .individual {
+    flex-direction: column;
+  }
+
+  .splitView {
+    flex-direction: row;
+  }
 }

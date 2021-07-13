@@ -2,8 +2,15 @@
   display: flex;
   flex-direction: column;
   padding: 0px;
-  width: 100%;
+  min-width: 100%;
   height: 100%;
-  font-size: 1.2vw;
+  font-size: 3vw;
   text-transform: capitalize;
+}
+
+@media (min-width: 768px) {
+  .table {
+    font-size: 2vw;
+    width: 50%;
+  }
 }

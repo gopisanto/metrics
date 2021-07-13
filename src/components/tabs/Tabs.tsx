@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { Children, ReactChild } from 'react';
+import React, { Children } from 'react';
 
 import './Tabs.scss';
 

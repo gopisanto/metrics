@@ -13,6 +13,7 @@ import './Individual.scss';
 
 interface Props {
   data: DataProps[];
+  groupMode: boolean;
 }
 
 const MEDIA_QUERY_LIST = ['(max-width: 767px)', '(min-width: 768px)'];
@@ -28,59 +29,76 @@ const getLevel = (value: number, type: string): string => {
   }
 };
 
-const Individual: React.FC<Props> = ({ data }) => {
+const Individual: React.FC<Props> = ({ data, groupMode }) => {
   const [selectedTab, setSelectedTab] = useState('chart');
   const screenSize = useMedia(MEDIA_QUERY_LIST, SCREEN_SIZES);
   const [selectedId, setSelectedId] = useState(data[0].id);
   const rowClickHandler = useCallback((id) => setSelectedId(id), []);
+  const rowHeadLabels = {
+    id: 1,
+    label: 1,
+    value: 1,
+    description: 3,
+    category: 1,
+  };
 
   return (
-    <div className="individual">
+    <div className={classnames('individual', { splitView: groupMode })}>
       <Tabs hide={screenSize !== 's'} selectedValue={selectedTab}>
         <Tab onSelect={() => setSelectedTab('chart')} value="chart"></Tab>
         <Tab onSelect={() => setSelectedTab('table')} value="table"></Tab>
       </Tabs>
-      <>
-        <div
-          className={classnames('chart', {
-            hide: screenSize === 's' && selectedTab !== 'chart',
-          })}
-        >
-          <BarChart data={data} />
-        </div>
-        <div
-          className={classnames('tableContainer', {
-            hide: screenSize === 's' && selectedTab !== 'table',
-          })}
-        >
-          <Table>
-            {data.map((datum) => (
-              <Row
-                key={`${datum.id}-${datum.label}`}
-                level={getLevel(datum.value, datum.type)}
-                selected={datum.id === selectedId}
-                id={datum.id}
-                onClickHandler={rowClickHandler}
-              >
-                {Object.keys(datum).map((key, index) => (
-                  <React.Fragment key={`${datum[key]}-${index}`}>
-                    {key !== 'type' && (
-                      <Col
-                        value={datum[key as keyof DataProps]}
-                        isPercentage={
-                          key === 'value' && datum.type === 'percentage'
-                        }
-                        numCols={key === 'description' ? 3 : 1}
-                        center={key === 'value'}
-                      />
-                    )}
-                  </React.Fragment>
-                ))}
-              </Row>
+      <div
+        className={classnames('chart', {
+          hide: screenSize === 's' && selectedTab !== 'chart',
+        })}
+      >
+        <BarChart data={data} />
+      </div>
+      <div
+        className={classnames('tableContainer', {
+          hide: screenSize === 's' && selectedTab !== 'table',
+        })}
+      >
+        <Table>
+          <Row>
+            {Object.keys(rowHeadLabels).map((key) => (
+              <Col
+                head
+                key={key}
+                value={key}
+                numCols={rowHeadLabels[key]}
+                center
+                isPercentage={false}
+              />
             ))}
-          </Table>
-        </div>
-      </>
+          </Row>
+          {data.map((datum) => (
+            <Row
+              key={`${datum.id}-${datum.label}`}
+              level={getLevel(datum.value, datum.type)}
+              selected={datum.id === selectedId}
+              id={datum.id}
+              onClickHandler={rowClickHandler}
+            >
+              {Object.keys(datum).map((key, index) => (
+                <React.Fragment key={`${datum[key]}-${index}`}>
+                  {key !== 'type' && (
+                    <Col
+                      value={datum[key as keyof DataProps]}
+                      isPercentage={
+                        key === 'value' && datum.type === 'percentage'
+                      }
+                      numCols={key === 'description' ? 3 : 1}
+                      center={key === 'value'}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </Row>
+          ))}
+        </Table>
+      </div>
     </div>
   );
 };

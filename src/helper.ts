@@ -1,4 +1,3 @@
-import { NumberValue } from 'd3';
 import { DataProps } from './components/dashboard/Dashboard';
 
 export const getConsolidatedKey = (list: DataProps, keys: string[]): string =>

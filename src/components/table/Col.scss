@@ -1,10 +1,10 @@
 .col {
-  padding: 5px;
   border-right: 1px solid white;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 5px;
+  padding: 3px;
+  font-size: 0.8em;
 
   &:last-child {
     border-right: 0px;
@@ -22,4 +22,10 @@ $cols: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
 
 .alignCenter {
   justify-content: center;
+}
+
+.head {
+  background-color: unset;
+  border: none;
+  color: white;
 }
