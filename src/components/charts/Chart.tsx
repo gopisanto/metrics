@@ -127,48 +127,6 @@ const Chart: React.FC = () => {
       .attr('class', 'axis y')
       .attr('transform', `translate(${margin.left}, 0)`)
       .call(yAxis);
-
-    /*svg
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${yScale(0)})`)
-      .call(xAxis)
-      .selectAll('text')
-      .data(data.data)
-      .text((d) => d.label)
-      .style('text-anchor', (d) => (d.value < 0 ? 'end' : 'start'))
-      .attr('x', (d) => Number(x(d.label)) + x.bandwidth() / 2)
-      .attr('y', (d) => y(Math.max(0, d.value)))
-      .attr('transform', 'rotate(-90)')
-      .style('font-size', '1.2em');
-
-    svg
-      .append('g')
-      .attr('transform', `translate(0, ${yScale(minExtent)})`)
-      .call(baseAxis);
-
-    svg.append('g').call(yAxis).attr('font-size', '1em');
-    console.log(`yscale = ${y(2280)}`);
-    svg
-      .append('g')
-      .attr('fill', 'royalblue')
-      .selectAll('rect')
-      .data(data.data)
-      .join('rect')
-      .attr('x', (d) => Number(x(d.label)))
-      .attr('y', (d) => y(Math.max(0, d.value)))
-      .attr('width', x.bandwidth())
-      .attr('height', (d) => Math.abs(y(d.value) - y(0)));
-
-    /*svg
-      .append('g')
-      .attr('fill', 'royalblue')
-      .selectAll('react')
-      .data(data)
-      .join('rect')
-      .attr('x', (d, i) => x(i))
-      .attr('y', (d) => y(d.value))
-      .attr('width', x.bandwidth())
-      .attr('height', (d) => y(0) - y(d.value));*/
   });
 
   return <svg ref={chartRef} />;
